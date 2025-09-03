@@ -1,5 +1,4 @@
-//your code here
-const images = [
+const urls = [
   "https://picsum.photos/id/237/200/300",
   "https://picsum.photos/seed/picsum/200/300",
   "https://picsum.photos/200/300?grayscale",
@@ -7,7 +6,13 @@ const images = [
   "https://picsum.photos/200/300.jpg"
 ];
 
-let selectedImages = [];
+const imageMap = {
+  "https://picsum.photos/id/237/200/300": "img1",
+  "https://picsum.photos/seed/picsum/200/300": "img2",
+  "https://picsum.photos/200/300?grayscale": "img3",
+  "https://picsum.photos/200/300/": "img4",
+  "https://picsum.photos/200/300.jpg": "img5"
+};
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -18,8 +23,9 @@ function shuffle(array) {
 }
 
 function init() {
-  const duplicateIndex = Math.floor(Math.random() * images.length);
-  let imageList = [...images, images[duplicateIndex]];
+  const duplicateIndex = Math.floor(Math.random() * urls.length);
+  const duplicate = urls[duplicateIndex];
+  let imageList = [...urls, duplicate];
   imageList = shuffle(imageList);
 
   const container = document.getElementById("image-container");
@@ -28,6 +34,7 @@ function init() {
   imageList.forEach((src) => {
     const img = document.createElement("img");
     img.src = src;
+    img.className = imageMap[src];
     img.addEventListener("click", handleClick);
     container.appendChild(img);
   });
@@ -36,17 +43,12 @@ function init() {
   document.getElementById("para").textContent = "";
   document.getElementById("reset").style.display = "none";
   document.getElementById("verify").style.display = "none";
-  selectedImages = [];
 }
 
 function handleClick(event) {
   const img = event.target;
-  if (img.classList.contains("selected")) {
-    img.classList.remove("selected");
-    selectedImages = selectedImages.filter((src) => src !== img.src);
-  } else {
+  if (!img.classList.contains("selected")) {
     img.classList.add("selected");
-    selectedImages.push(img.src);
   }
   updateUI();
 }
@@ -69,8 +71,7 @@ function updateUI() {
 }
 
 document.getElementById("reset").addEventListener("click", () => {
-  document.querySelectorAll("img").forEach((img) => img.classList.remove("selected"));
-  selectedImages = [];
+  document.querySelectorAll(".selected").forEach((img) => img.classList.remove("selected"));
   updateUI();
 });
 
